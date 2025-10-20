@@ -33,7 +33,7 @@ export const signUpUser = async (req, res) => {
     
   } catch (error) {
 
-    console.log("Error signing up User", error.message);
+    console.error("Error signing up User", error.message);
     
     return res.status(500).json({ error: "Internal Server Error"});
   }
@@ -81,7 +81,7 @@ export const loginUserController = async (req, res) => {
     
   } catch (error) {
 
-    console.log("Error logging in user", error);
+    console.error("Error logging in user", error);
 
     return res.status(500).json({error: "Internal Server Error"});
     
