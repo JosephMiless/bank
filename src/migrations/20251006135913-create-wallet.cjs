@@ -18,8 +18,12 @@ module.exports = {
       },
       bankName: {
         type: Sequelize.STRING,
-        accountNumber: Sequelize.STRING,
-        unique:true
+        unique:true,
+        allowNull: false
+      },
+      accountNumber: {type: Sequelize.STRING,
+        unique: true,
+        allowNull: false
       },
       accountType: {
         type: Sequelize.ENUM('savings', 'checking')
