@@ -6,7 +6,8 @@
 
   while (exists) {
     accountNumber = Math.floor(Math.random() * (max - min + 1)) + min;
-    const result = await db.findOne({ where: { accountNumber } });
+    const num = accountNumber.toString()
+    const result = await db.findOne({ where: { accountNumber: num } });
     exists = !!result; // true if number exists
   }
 

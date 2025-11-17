@@ -9,6 +9,7 @@ export const signUpUserSchema = joi.object({
     postalCode: joi.string().required(),
     DOB: joi.string().required(),
     SSN: joi.string().required(),
+    accountType: joi.string().required(),
     password: joi.string().required().min(6)
 });
 

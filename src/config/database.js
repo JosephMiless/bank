@@ -1,29 +1,28 @@
-import dotenv from 'dotenv';
-dotenv.config();
+import { config } from "./env.js";
 
 export default {
-    development: {
-        username: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
-        dialect: "postgres",
-    },
-    test: {
-        username: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
-        dialect: "postgres"
-    },
-    production: {
-        username: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
-        dialect: "postgres"
+  development: {
+    username: config.db.user,
+    password: config.db.pass,
+    database: config.db.name,
+    host: config.db.host,
+    port: config.db.port,
+    dialect: "postgres"
+  },
+
+  production: {
+    username: config.db.user,
+    password: config.db.pass,
+    database: config.db.name,
+    host: config.db.host,
+    port: config.db.port,
+    dialect: "postgres",
+    logging: false,
+    dialectOptions: {
+      ssl: {
+          require: true,
+        rejectUnauthorized: false,
+      }
     }
+  }
 };

@@ -7,11 +7,11 @@ import { Transaction } from "./transaction.js";
 
 // A user can have many bank accounts
       User.hasMany(BankAccount, {
-        foreignKey: "userId",
+        foreignKey: "userID",
         as: "bankAccounts",
       });
 
-      BankAccount.belongsTo(User, { foreignKey: "userId", as: "user" });
+      BankAccount.belongsTo(User, { foreignKey: "userID", as: "user" });
 
 // A bank account can have many transactions
        BankAccount.hasMany(Transaction, {
@@ -40,8 +40,8 @@ export const initDB = async () => {
     await sequelize.authenticate();
     console.log("✅ Database connection established successfully.");
 
-    await sequelize.sync({ alter: true }); // use { force: true } for fresh start
-    console.log("✅ Database synced successfully!");
+    // await sequelize.sync({ alter: true }); // use { force: true } for fresh start
+    // console.log("✅ Database synced successfully!");
 
   } catch (error) {
     console.error("❌ Database sync/connection failed:", error);

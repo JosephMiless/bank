@@ -2,8 +2,11 @@ import * as tokens from "../tokens/jwt.js";
 import * as bcrypt from "../utils/bcrypt.js";
 import * as userSchema from "../validators/user.js";
 import * as userService from "./users.services.js";
+import * as walletService from "../accounts/accounts.services.js"
+import { generateUniqueNumber } from "../utils/uniqueNumber.js";
 import { sanitize } from "../utils/sanititzer.js";
 import { config } from "../config/env.js";
+import { BankAccount } from "../models/bankAccount.js";
 
 
 export const signUpUser = async (req, res) => {
@@ -13,29 +16,35 @@ export const signUpUser = async (req, res) => {
 
     if(error) return res.status(400).json({error:error.message});
 
-    const { firstName, lastName, email, address, state, postalCode, DOB, SSN, password } = value;
+    let { firstName, lastName, email, address, state, postalCode, DOB, SSN, accountType, password } = value;
 
     // Check if user exists
-    const userExists = await userService.findUserByEmail(email);
+    const userExists = await userService.findUserByEmail(value.email);
     
     if (userExists.length > 0) {
       return res.status(400).json({ message: "Account already exists" });
     };
     
     // encrypt user's password before storing to DB
-    const hashedPassword = await bcrypt.hashPassword(password);
+    value.password = await bcrypt.hashPassword(value.password);
 
-    let user = await userService.createUser({ firstName, lastName, email, address, state, postalCode, DOB, SSN, password: hashedPassword});
+    let user = await userService.createUser(value);
 
+    // create a bank account using the user's data
+
+    const accountNumber = await generateUniqueNumber(10, BankAccount);
+    
+    let wallet = await walletService.createAccount({userID: user.id, accountNumber, accountType});
+    
     user = await sanitize(user.toJSON());
 
-    return res.status(201).json(user);
+    return res.status(201).json({user, wallet});
     
   } catch (error) {
 
     console.error("Error signing up User", error.message);
     
-    return res.status(500).json({ error: "Internal Server Error"});
+    return res.status(500).json({ error: "Internal Server Error", details: error.errors});
   }
 };
 

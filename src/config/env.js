@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 export const config = {
     port: process.env.PORT,
     asecret: process.env.ACCESS_SECRET_KEY,

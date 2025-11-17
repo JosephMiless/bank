@@ -20,6 +20,7 @@ BankAccount.init(
     bankName: {
       type: DataTypes.STRING,
       allowNull: false,
+      defaultValue: "Horizon"
     },
     accountNumber: {
       type: DataTypes.STRING,

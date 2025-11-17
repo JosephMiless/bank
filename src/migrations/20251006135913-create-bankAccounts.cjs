@@ -18,8 +18,8 @@ module.exports = {
       },
       bankName: {
         type: Sequelize.STRING,
-        unique:true,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 'Horizon'
       },
       accountNumber: {type: Sequelize.STRING,
         unique: true,

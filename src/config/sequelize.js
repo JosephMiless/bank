@@ -3,6 +3,16 @@ import { config } from "./env.js";
 
 export const sequelize = new Sequelize(config.db.name, config.db.user, config.db.pass, {
   host: config.db.host,
+  port: config.db.port,
   dialect: 'postgres',
-  logging: false
+  logging: config.nodeEnv === "development" ? console.log : false,
+  dialectOptions:
+      config.nodeEnv === "production"
+        ? {
+            ssl: {
+              require: true,
+              rejectUnauthorized: false,
+            },
+          }
+        : {},
 });
