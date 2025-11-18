@@ -19,9 +19,9 @@ export const signUpUser = async (req, res) => {
     let { firstName, lastName, email, address, state, postalCode, DOB, SSN, accountType, password } = value;
 
     // Check if user exists
-    const userExists = await userService.findUserByEmail(value.email);
+    const userExists = await userService.findUserByEmailOrID({email: value.email});
     
-    if (userExists.length > 0) {
+    if (userExists) {
       return res.status(400).json({ message: "Account already exists" });
     };
     
@@ -42,9 +42,9 @@ export const signUpUser = async (req, res) => {
     
   } catch (error) {
 
-    console.error("Error signing up User", error.message);
+    console.error("Error signing up User", error);
     
-    return res.status(500).json({ error: "Internal Server Error", details: error.errors});
+    return res.status(500).json({ error: "Internal Server Error"});
   }
 };
 
@@ -58,20 +58,20 @@ export const loginUserController = async (req, res) => {
     const {email, password} = value;
 
     // check if user exists
-    const userExists = await userService.findUserByEmail(email);
+    const userExists = await userService.findUserByEmailOrID({email});
 
-    if (userExists.length === 0) {
+    if (!userExists) {
       return res.status(404).json({ message: "User not found. Kindly create an account to login" });
     };
 
     // compare password
-    const passwordMatch = await bcrypt.comparePassword(password, userExists[0].password);
+    const passwordMatch = await bcrypt.comparePassword(password, userExists.password);
 
     if(!passwordMatch) return res.status(400).json({error: "Invalid credentials"});
 
     // sign the access and refreesh tokens with user details
-    const accessToken = tokens.aToken({id: userExists[0].id});
-    const refreshToken = tokens.rToken({id: userExists[0].id});
+    const accessToken = tokens.aToken({id: userExists.id});
+    const refreshToken = tokens.rToken({id: userExists.id});
 
     // save the refresh token as an http cookie
     res.cookie("userRefreshToken", refreshToken, {
@@ -85,7 +85,7 @@ export const loginUserController = async (req, res) => {
     return res.status(200).json({
       message: "User logged in successfully",
       accessToken,
-      user: userExists[0].firstName
+      user: userExists.firstName
     });
     
   } catch (error) {
