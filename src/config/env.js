@@ -7,6 +7,7 @@ export const config = {
     asecret: process.env.ACCESS_SECRET_KEY,
     rsecret: process.env.REFRESH_SECRET_KEY,
     nodeEnv: process.env.NODE_ENV,
+    apiKey: process.env.API_KEY,
     db: {
         port: process.env.DB_PORT,
         user: process.env.DB_USER,

@@ -2,14 +2,18 @@ import * as tokens from "../tokens/jwt.js";
 import * as bcrypt from "../utils/bcrypt.js";
 import * as userSchema from "../validators/user.js";
 import * as userService from "./users.services.js";
-import * as walletService from "../accounts/accounts.services.js"
+import * as walletService from "../accounts/accounts.services.js";
 import { generateUniqueNumber } from "../utils/uniqueNumber.js";
 import { sanitize } from "../utils/sanititzer.js";
 import { config } from "../config/env.js";
 import { BankAccount } from "../models/bankAccount.js";
+import { sequelize } from "../config/sequelize.js";
 
 
 export const signUpUser = async (req, res) => {
+
+  const t = await sequelize.transaction();
+
   try {
 
     const {error, value} = userSchema.signUpUserSchema.validate(req.body);
@@ -22,25 +26,33 @@ export const signUpUser = async (req, res) => {
     const userExists = await userService.findUserByEmailOrID({email: value.email});
     
     if (userExists) {
+
+      await t.rollback();
+
       return res.status(400).json({ message: "Account already exists" });
+
     };
     
     // encrypt user's password before storing to DB
     value.password = await bcrypt.hashPassword(value.password);
 
-    let user = await userService.createUser(value);
+    let user = await userService.createUser(value, {transaction: t});
 
     // create a bank account using the user's data
 
     const accountNumber = await generateUniqueNumber(10, BankAccount);
     
-    let wallet = await walletService.createAccount({userID: user.id, accountNumber, accountType});
+    let wallet = await walletService.createAccount({userID: user.id, accountNumber, accountType}, {transaction: t});
+
+    await t.commit();
     
     user = await sanitize(user.toJSON());
 
     return res.status(201).json({user, wallet});
     
   } catch (error) {
+
+    await t.rollback();
 
     console.error("Error signing up User", error);
     

@@ -5,7 +5,7 @@ export class Transaction extends Model {}
 
 Transaction.init(
   {
-    d: {
+      id: {
         allowNull: false,
         primaryKey: true,
         type: DataTypes.UUID,
@@ -13,7 +13,6 @@ Transaction.init(
       },
       sourceAccount: {
         type: DataTypes.STRING,
-        allowNull: false,
         references: { model: 'BankAccounts', key: 'id'}
       },
       destinationAccount: {
@@ -35,7 +34,7 @@ Transaction.init(
         defaultValue: 'processing'
       },
       category:{
-        type: DataTypes.ENUM('deposit', 'withdrawal', 'transfrer')
+        type: DataTypes.ENUM('deposit', 'withdrawal', 'transfer')
       }
   },
   {

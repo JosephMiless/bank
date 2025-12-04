@@ -11,14 +11,14 @@ export const findUserProfileByEmailOrID = async (attribute) => {
             ]});
 };
 
-export const createUser = async (data) => {
-  return await User.create(data);
+export const createUser = async (data, options = {}) => {
+  return await User.create(data, options);
 };
 
 export const getAllUsers = async () => {
   return await User.findAll();
 };
 
-export const updateUserProfile = async (attributes, id) => {
-  return await User.update(attributes, {where: {id}});
+export const updateUserProfile = async (attributes, id, options = {}) => {
+  return await User.update(attributes, {where: {id}}, options);
 };
